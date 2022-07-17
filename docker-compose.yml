@@ -1,0 +1,25 @@
+version : '3.7'
+
+services :
+    database : 
+        image : 'postgres'
+    
+        ports : 
+        - 5432:5432
+
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: messi@10
+            POSTGRES_DB: RestaurantDB
+        volumes:
+        - /var/lib/postgresql/data
+    web:
+        image: 'dockerimage:restaurant'
+        build: .
+        depends_on:
+         - database
+        ports:
+         - 3000:8080
+                  
+         
+        
