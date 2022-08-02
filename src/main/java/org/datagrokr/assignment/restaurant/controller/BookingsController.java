@@ -77,7 +77,6 @@ public class BookingsController implements ContainerResponseFilter{
     @DELETE
     @Path("Cancel-Booking/{phoneNo}")
     public Response DeleteBooking(@PathParam("phoneNo") String phoneNo) throws Exception {
-    	System.out.println("Phone : "+phoneNo);
     	try {
     		bookingsRepository.delete(phoneNo);
     		return Response.status(200).entity("Booking canceled under phone No : "+phoneNo).build();
