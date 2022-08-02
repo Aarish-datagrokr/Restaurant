@@ -47,7 +47,6 @@ public class BookingsController implements ContainerResponseFilter{
 
     @POST
     @Path("/Book-For")
-//    @Consumes(MediaType.APPLICATION_JSON)
     public Response BookFor(String data) {
     	try {
     		
