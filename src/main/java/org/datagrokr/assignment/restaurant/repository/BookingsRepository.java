@@ -24,14 +24,14 @@ public class BookingsRepository {
     }
 
     public void save(Bookings booking) {
-        entityManager.getTransaction().begin();
+    	if(!entityManager.getTransaction().isActive()) entityManager.getTransaction().begin();
         entityManager.persist(booking);
         entityManager.getTransaction().commit();
     }
 
     public int getTableNoByPhoneNo(String phoneNo) throws ObjectNotFoundException {
     	try {
-    		
+        if(!entityManager.getTransaction().isActive()) entityManager.getTransaction().begin();    		
         Query query = entityManager.createQuery("Select tableNo from Bookings where phoneNo='"+phoneNo+"'");
         query.setMaxResults(1);
         entityManager.clear();

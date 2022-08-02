@@ -5,6 +5,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.ServiceUnavailableException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
@@ -50,16 +51,13 @@ public class BookingsController implements ContainerResponseFilter{
     public Response BookFor(String data) {
     	try {
     		
-    		System.out.println(data);    		
     		JSONParser parser = new JSONParser();  
     		JSONObject bookingData = (JSONObject) parser.parse(data);  
     		    		
     		String name = (String) bookingData.get("name");
-    		System.out.println(name);
     		String phoneNo = (String) bookingData.get("phoneNo");
     		int members = Integer.parseInt((String) bookingData.get("members"));
     		Time reservationTime =java.sql.Time.valueOf(LocalTime.parse((String) bookingData.get("reservationTime")));
-  
   
         	if(LocalTime.now().isAfter(LocalTime.parse("20:00"))) return Response.status(500).entity("Bookings not allowed after 8pm.").build();
         	int tableNo = tableRepository.getTableFor(members);
@@ -72,16 +70,17 @@ public class BookingsController implements ContainerResponseFilter{
             else {
                 return Response.status(500).entity("No table available at the moment").build();
             }
-    	} catch(Exception e) {return Response.status(500).entity("Check your details and try again.").build();
+    	} catch(Exception e) {return Response.status(500).entity("Check your details and try again."+e.getMessage()).build();
     	}
     }
     
     @DELETE
-    @Path("Cancel-Booking")
-    public Response DeleteBooking( String phoneNo) {
+    @Path("Cancel-Booking/{phoneNo}")
+    public Response DeleteBooking(@PathParam("phoneNo") String phoneNo) throws Exception {
+    	System.out.println("Phone : "+phoneNo);
     	try {
-    	bookingsRepository.delete(phoneNo);
-    	return Response.status(200).entity("Booking canceled under phone No : "+phoneNo).build();
+    		bookingsRepository.delete(phoneNo);
+    		return Response.status(200).entity("Booking canceled under phone No : "+phoneNo).build();
     	} catch(ObjectNotFoundException e) {
             return Response.status(500).entity("No booking record under phone No : "+phoneNo).build();
     	}

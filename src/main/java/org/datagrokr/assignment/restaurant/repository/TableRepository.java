@@ -16,7 +16,7 @@ public class TableRepository {
     }
 
     public void setTableStatus(int tableNo, boolean booked) {
-        entityManager.getTransaction().begin();
+    	if(!entityManager.getTransaction().isActive()) entityManager.getTransaction().begin();
         Query query = entityManager.createQuery("Update Table set isBooked = "+booked+" where tableNo = "+tableNo );
         query.executeUpdate();
         entityManager.getTransaction().commit();
@@ -24,7 +24,7 @@ public class TableRepository {
     }
 
     public int getTableFor(int members) {
-        entityManager.getTransaction().begin();
+    	if(!entityManager.getTransaction().isActive()) entityManager.getTransaction().begin();
         Query query;
         if(members>0 && members<=2) {
         	try {
@@ -35,7 +35,8 @@ public class TableRepository {
             return (int) query.getSingleResult();
         	} catch(jakarta.persistence.NoResultException e) {
                 entityManager.clear();
-        		return 0;
+                System.out.println(e.getMessage());
+                return 0;
         	}
         }
         if(members>2 && members<=4) {
@@ -47,6 +48,7 @@ public class TableRepository {
             return (int) query.getSingleResult();
         	} catch(jakarta.persistence.NoResultException e) {
                 entityManager.clear();
+                System.out.println(e.getMessage());
         		return 0;
         	}
         }
